@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Client</title>
+    <style>
+        /* 在这里添加CSS样式 */
+        #messages {
+            font-size: 12px; /* 设置字体大小为12像素 */
+            line-height: 0.7; /* 调整行间距，1.2是一个常见的值，可以根据需要调整 */
+        }
+    </style>
+    <script>
+        // 当页面加载完成时，执行此函数
+        window.onload = function() {
+            // 创建WebSocket连接
+			console.log('start ');
+            var ws = new WebSocket('ws://ipaddr:8085');
+			console.log('start 2');
+            // 连接打开时触发
+            ws.onopen = function() {
+                console.log('Connected to the server.');
+            };
+
+            // 接收到消息时触发
+            ws.onmessage = function(event) {
+                // 将接收到的消息添加到页面上
+                var message = event.data;
+                var messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML += '<p>' + message + '</p>';
+            };
+
+            // 连接错误时触发
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+
+            // 连接关闭时触发
+            ws.onclose = function() {
+                console.log('Disconnected from the server.');
+            };
+
+            // 获取断开连接的按钮
+            var disconnectButton = document.getElementById('disconnectButton');
+            // 为按钮添加点击事件监听器
+            disconnectButton.onclick = function() {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.close(); // 关闭WebSocket连接
+                    console.log('disconnectButton close ');
+                }else{
+                    console.log('disconnectButton already close ');
+                }
+            }
+
+            // 获取清空消息的按钮
+            var clearMessagesButton = document.getElementById('clearMessagesButton');
+            // 为清空消息按钮添加点击事件监听器
+            clearMessagesButton.onclick = function() {
+                var messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = ''; // 清空消息区域的内容
+            };
+
+        };
+    </script>
+</head>
+<body>
+<h1>WebSocket Messages</h1>
+<!-- 添加断开连接的按钮 -->
+<button id="disconnectButton">Disconnect</button>
+<button id="clearMessagesButton">Clear Messages</button>
+<div id="messages"></div>
+</body>
+</html>
