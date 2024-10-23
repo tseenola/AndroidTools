@@ -51,7 +51,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.tseenola'
-                artifactId = 'AndroidTools'
+                artifactId = 'debugtool'
                 version = '1.2'
             }
         }
