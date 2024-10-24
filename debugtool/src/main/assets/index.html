@@ -17,12 +17,16 @@
             var messagesDiv = document.getElementById('messages');
             var disconnectButton = document.getElementById('disconnectButton');
             var clearMessagesButton = document.getElementById('clearMessagesButton');
-
+            var continueOrPause = document.getElementById('continueOrPause');
+            var isReceive = true;
             ws.onopen = function() {
                 console.log('Connected to the server.');
             };
 
             ws.onmessage = function(event) {
+                if(!isReceive){
+                    return;
+                }
                 var message = event.data;
                 try {
                     var filterRegex = regexFilter.value ? new RegExp(regexFilter.value) : /.*/;
@@ -53,6 +57,15 @@
                 messagesDiv.innerHTML = '';
             };
 
+            continueOrPause.onclick = function() {
+                 isReceive = !isReceive;
+                 if(isReceive){
+                    continueOrPause.textContent  = "暂停接收";
+                 }else{
+                    continueOrPause.textContent  = "接续接收";
+                 };
+            };
+
             window.addEventListener('beforeunload', function() {
                 if (ws.readyState === WebSocket.OPEN) {
                     ws.close();
@@ -65,8 +78,9 @@
 <body>
 <h1>Android Messages</h1>
 <input type="text" id="regexFilter" placeholder="Enter regex to filter messages">
-<button id="disconnectButton">Disconnect</button>
-<button id="clearMessagesButton">Clear Messages</button>
+<button id="disconnectButton">断开连接</button>
+<button id="clearMessagesButton">清空消息</button>
+<button id="continueOrPause">暂停接收</button>
 <div id="messages"></div>
 </body>
 </html>
