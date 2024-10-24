@@ -26,7 +26,7 @@ public class RequestHandler {
         BufferedReader reader = null;
         PrintStream output = null;
         try {
-            String route = "index2.html";
+            String route = "index.html";
             output = new PrintStream(socket.getOutputStream());
             String ipAddr = NetworkUtils.getIpAddr(mContext);
             String content = Utils.loadContentStr(route,mContext.getResources().getAssets());

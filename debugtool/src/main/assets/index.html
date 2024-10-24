@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Android Log</title>
+    <style>
+        /* 在这里添加CSS样式 */
+        #messages {
+            font-size: 12px; /* 设置字体大小为12像素 */
+            line-height: 0.7; /* 调整行间距，1.2是一个常见的值，可以根据需要调整 */
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var ws = new WebSocket('ws://ipaddr:8085');
+            var regexFilter = document.getElementById('regexFilter');
+            var messagesDiv = document.getElementById('messages');
+            var disconnectButton = document.getElementById('disconnectButton');
+            var clearMessagesButton = document.getElementById('clearMessagesButton');
+
+            ws.onopen = function() {
+                console.log('Connected to the server.');
+            };
+
+            ws.onmessage = function(event) {
+                var message = event.data;
+                try {
+                    var filterRegex = regexFilter.value ? new RegExp(regexFilter.value) : /.*/;
+                    if (filterRegex.test(message)) {
+                        messagesDiv.innerHTML += '<p>' + message + '</p>';
+                    }
+                } catch (e) {
+                    console.error('Invalid regex:', e);
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+
+            ws.onclose = function() {
+                console.log('Disconnected from the server.');
+            };
+
+            disconnectButton.onclick = function() {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.close();
+                    console.log('WebSocket connection closed.');
+                }
+            };
+
+            clearMessagesButton.onclick = function() {
+                messagesDiv.innerHTML = '';
+            };
+
+            window.addEventListener('beforeunload', function() {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.close();
+                    console.log('Page is unloading, closing WebSocket connection.');
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+<h1>Android Messages</h1>
+<input type="text" id="regexFilter" placeholder="Enter regex to filter messages">
+<button id="disconnectButton">Disconnect</button>
+<button id="clearMessagesButton">Clear Messages</button>
+<div id="messages"></div>
+</body>
+</html>

@@ -59,6 +59,7 @@ public class LogServer {
                 Log.d("vbvb", "LogServer onServerStart: "  );
             }
         });
+        server.setReuseAddr(true);
         server.start();
     }
 
