@@ -1,4 +1,4 @@
-package com.tssenola.androidtools
+package com.tssenola.androidtools.ui
 
 import android.app.Activity
 import android.os.Bundle
@@ -9,7 +9,6 @@ import com.tssenola.debugtool.server.LogServer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class MainActivity : Activity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {

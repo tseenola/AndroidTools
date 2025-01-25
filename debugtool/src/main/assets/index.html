@@ -7,9 +7,44 @@
         /* 在这里添加CSS样式 */
         #messages {
             font-size: 12px; /* 设置字体大小为12像素 */
-            line-height: 0.7; /* 调整行间距，1.2是一个常见的值，可以根据需要调整 */
+            line-height: 1.2; /* 调整行间距，1.2是一个常见的值，可以根据需要调整 */
             white-space: pre; /* 保留空格和换行符，不自动换行 */
             overflow-x: auto; /* 当文本超出容器宽度时，提供水平滚动条 */
+            height: calc(100vh - 60px); /* 设置消息区域高度 */
+            overflow-y: auto; /* 垂直滚动条 */
+            margin-top: 10px; /* 与按钮保持一定距离 */
+        }
+
+        /* 固定按钮样式 */
+        .fixed-button {
+            position: fixed;
+            bottom: 10px; /* 距离底部10像素 */
+            right: 10px; /* 距离右侧10像素 */
+            z-index: 1000; /* 确保按钮在其他元素之上 */
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px; /* 每个按钮之间的间距 */
+        }
+
+        /* 为每个按钮设置不同的底部间距 */
+        #disconnectButton {
+            bottom: 10px;
+        }
+
+        #clearMessagesButton {
+            bottom: 60px; /* 第二个按钮距离底部60像素 */
+        }
+
+        #continueOrPause {
+            bottom: 110px; /* 第三个按钮距离底部110像素 */
+        }
+
+          #autoScrollButton {
+            bottom: 160px; /* 第四个按钮距离底部160像素 */
         }
     </style>
     <script>
@@ -20,7 +55,9 @@
             var disconnectButton = document.getElementById('disconnectButton');
             var clearMessagesButton = document.getElementById('clearMessagesButton');
             var continueOrPause = document.getElementById('continueOrPause');
+			var autoScrollButton = document.getElementById('autoScrollButton');
             var isReceive = true;
+			var isAutoScroll = true;
             ws.onopen = function() {
                 console.log('Connected to the server.');
             };
@@ -34,6 +71,9 @@
                     var filterRegex = regexFilter.value ? new RegExp(regexFilter.value) : /.*/;
                     if (filterRegex.test(message)) {
                         messagesDiv.innerHTML += '<p>' + message + '</p>';
+                         if (isAutoScroll) {
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight; // 自动滚动到底部
+                        }
                     }
                 } catch (e) {
                     console.error('Invalid regex:', e);
@@ -64,8 +104,17 @@
                  if(isReceive){
                     continueOrPause.textContent  = "暂停接收";
                  }else{
-                    continueOrPause.textContent  = "接续接收";
+                    continueOrPause.textContent  = "继续接收";
                  };
+            };
+
+            autoScrollButton.onclick = function() {
+                isAutoScroll = !isAutoScroll;
+                if(isAutoScroll){
+                    autoScrollButton.textContent  = "关闭自动滚动";
+                }else{
+                    autoScrollButton.textContent  = "开启自动滚动";
+                };
             };
 
             window.addEventListener('beforeunload', function() {
@@ -80,9 +129,10 @@
 <body>
 <h1>Android Messages</h1>
 <input type="text" id="regexFilter" placeholder="Enter regex to filter messages">
-<button id="disconnectButton">断开连接</button>
-<button id="clearMessagesButton">清空消息</button>
-<button id="continueOrPause">暂停接收</button>
+<button class="fixed-button" id="disconnectButton">断开连接</button>
+<button class="fixed-button" id="clearMessagesButton">清空消息</button>
+<button class="fixed-button" id="continueOrPause">暂停接收</button>
+<button class="fixed-button" id="autoScrollButton">关闭自动滚动</button>
 <div id="messages"></div>
 </body>
 </html>
